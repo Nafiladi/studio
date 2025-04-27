@@ -62,7 +62,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
   }, []);
 
   useEffect(() => {
-    if (isFirebaseInitialized) {
+    if (isFirebaseInitialized && !initializationError) {
       try {
         const authInstance = getAuth(app);
         setAuth(authInstance);
@@ -71,7 +71,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         setInitializationError(error); // Capture the error
       }
     }
-  }, [isFirebaseInitialized]);
+  }, [isFirebaseInitialized, initializationError]);
 
   useEffect(() => {
     if (!auth) return;
