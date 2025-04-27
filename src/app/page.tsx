@@ -11,7 +11,8 @@ import {useUser} from '@/hooks/use-user';
 import {useRouter} from 'next/navigation';
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {improveAnimationPrompt} from '@/ai/flows/improve-prompt';
-import {RedoIcon} from 'lucide-react';
+import {RedoIcon, SettingsIcon} from 'lucide-react'; // Import SettingsIcon
+import Link from 'next/link'; // Import Link
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
@@ -73,67 +74,85 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-background">
-      <header className="w-full flex justify-between items-center p-4">
-        <h1 className="text-2xl font-bold tracking-tight transition-colors duration-300">AnimateAI</h1>
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-black text-foreground">
+      <header className="w-full p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-md flex justify-between items-center sticky top-0 z-10">
+        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-50 tracking-tight">AnimateAI</h1>
         <div className="flex items-center space-x-4">
-          <Avatar className="transition-transform duration-300 hover:scale-105">
-            <AvatarImage src={user.photoURL || 'https://picsum.photos/id/237/200/300'} alt={user.displayName || 'Avatar'} />
-            <AvatarFallback>{user.displayName?.charAt(0) || 'U'}</AvatarFallback>
-          </Avatar>
-          <span className="transition-colors duration-300">{user.displayName || user.email}</span>
-          <Button variant="outline" size="sm" onClick={signOut} className="transition-colors duration-300 hover:bg-secondary hover:text-secondary-foreground">
+           {/* Removed onClick handler and cursor-pointer */}
+           <div className="flex items-center space-x-2">
+            <span className="text-gray-700 dark:text-gray-300 hidden sm:inline">{user.displayName || user.email}</span>
+            <Avatar className="w-9 h-9">
+              <AvatarImage src={user.photoURL || 'https://picsum.photos/id/237/200/300'} alt={user.displayName || 'Avatar'} />
+              <AvatarFallback>{user.displayName?.charAt(0) || 'U'}</AvatarFallback>
+            </Avatar>
+           </div>
+           {/* Add Settings Button/Link */}
+           <Link href="/settings">
+             <Button variant="ghost" size="icon" aria-label="Settings">
+               <SettingsIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+             </Button>
+           </Link>
+
+          <Button variant="outline" size="sm" onClick={signOut} className="border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700 dark:hover:text-blue-300">
             Sign Out
           </Button>
         </div>
       </header>
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-4 text-center">
-        <Card className="w-full max-w-md transition-shadow duration-300 hover:shadow-lg">
-          <CardHeader>
-            <CardTitle className="transition-colors duration-300">Animation Generator</CardTitle>
-            <CardDescription className="transition-colors duration-300">Enter a prompt to generate an animation.</CardDescription>
+      <main className="flex flex-col items-center justify-center flex-1 w-full px-4 py-8">
+        <Card className="w-full max-w-xl bg-white dark:bg-gray-800 shadow-xl rounded-lg overflow-hidden">
+          <CardHeader className="bg-gray-50 dark:bg-gray-700 p-6">
+            <CardTitle className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Animation Generator</CardTitle>
+            <CardDescription className="text-gray-600 dark:text-gray-300 mt-2">Bring your ideas to life with AI-powered animations.</CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4">
+          <CardContent className="p-6 grid gap-6">
             <div className="grid gap-2">
               <Textarea
-                placeholder="Enter your prompt here."
+                placeholder="Describe the animation you want to create... e.g., 'A cat jumping over a fence'"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                className="transition-colors duration-300 focus-visible:ring-accent"
+                className="min-h-[120px] resize-none focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-50"
               />
             </div>
-            <div className="flex justify-between">
-              <Button onClick={handleGenerateAnimation} disabled={isLoading} className="transition-colors duration-300 hover:bg-accent hover:text-accent-foreground">
+            <div className="flex flex-col sm:flex-row gap-4 justify-between">
+              <Button
+                onClick={handleGenerateAnimation}
+                disabled={isLoading || !prompt.trim()}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
+              >
                 {isLoading ? 'Generating...' : 'Generate Animation'}
               </Button>
               <Button
                 variant="secondary"
                 onClick={handleImprovePrompt}
-                disabled={isImproving}
-                className="transition-colors duration-300 hover:bg-primary hover:text-primary-foreground"
+                disabled={isImproving || !prompt.trim()}
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
               >
                 {isImproving ? (
                   <>
                     Improving... <RedoIcon className="ml-2 h-4 w-4 animate-spin" />
                   </>
                 ) : (
-                  'Improve Prompt'
+                  <>Improve Prompt <RedoIcon className="ml-2 h-4 w-4" /></>
                 )}
               </Button>
             </div>
           </CardContent>
         </Card>
         {animationDataUri && (
-          <div className="mt-8 transition-opacity duration-300">
-            <h2 className="text-xl font-semibold mb-4 transition-colors duration-300">Generated Animation</h2>
-            <video src={animationDataUri} controls width="640" height="360" className="rounded-lg shadow-md transition-shadow duration-300"></video>
+          <div className="mt-12 w-full max-w-xl bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6">
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-50 mb-4 text-center">Generated Animation</h2>
+            <div className="relative" style={{paddingTop: '56.25%'}}> {/* 16:9 Aspect Ratio */}
+              <video
+                src={animationDataUri}
+                controls
+                className="absolute top-0 left-0 w-full h-full rounded-md object-cover"
+              ></video>
+            </div>
           </div>
         )}
       </main>
-      <footer className="flex items-center justify-center w-full h-24 border-t transition-colors duration-300">
-        <p className="text-sm text-muted-foreground transition-colors duration-300">
-          Powered by Firebase Studio and Google Gemini API
-        </p>
+      <footer className="w-full py-6 text-center text-sm text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 mt-8">
+        <p>Powered by Firebase Studio and Google Gemini API</p>
       </footer>
     </div>
   );

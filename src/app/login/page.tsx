@@ -9,18 +9,30 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/compo
 import {useToast} from '@/hooks/use-toast';
 import {useUser} from '@/hooks/use-user';
 import Link from 'next/link';
+import { Checkbox } from '@/components/ui/checkbox'; // Import Checkbox
+import { Label } from '@/components/ui/label'; // Import Label
+import { getAuth, setPersistence, browserSessionPersistence, browserLocalPersistence } from 'firebase/auth'; // Import persistence functions
+import { app } from '@/lib/firebase'; // Import your Firebase app instance
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false); // State for checkbox
   const [isLoading, setIsLoading] = useState(false);
   const {signIn} = useUser();
   const {toast} = useToast();
   const router = useRouter();
+  const auth = getAuth(app); // Get Firebase Auth instance
 
   const handleLogin = async () => {
     setIsLoading(true);
     try {
+      // Set persistence based on rememberMe state
+      // If rememberMe is true, use browserLocalPersistence (keeps user logged in)
+      // If rememberMe is false, use browserSessionPersistence (logs out on browser close)
+      await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
+
+      // Proceed with sign-in
       await signIn(email, password);
       toast({
         title: 'Login Successful!',
@@ -64,6 +76,13 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="transition-colors duration-300 focus-visible:ring-accent"
               />
+            </div>
+             {/* Remember Me Checkbox - Controls Firebase Authentication Persistence */}
+            <div className="flex items-center space-x-2">
+              <Checkbox id="remember-me" checked={rememberMe} onCheckedChange={(checked) => setRememberMe(checked === true)} />
+              <Label htmlFor="remember-me" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Remember me
+              </Label>
             </div>
             <Button onClick={handleLogin} disabled={isLoading} className="transition-colors duration-300 hover:bg-accent hover:text-accent-foreground">
               {isLoading ? 'Logging in...' : 'Login'}
