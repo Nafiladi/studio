@@ -4,13 +4,15 @@ import { initializeApp } from "firebase/app";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBmSvYpOk_mREsVo48wDiPokCM4nwPBbFo",
-  authDomain: "story-weaver-2r9wi.firebaseapp.com",
-  projectId: "story-weaver-2r9wi",
-  storageBucket: "story-weaver-2r9wi.firebasestorage.app",
-  messagingSenderId: "942054941199",
-  appId: "1:942054941199:web:37802c37c5d00d8b33397a"
+  apiKey: "AIzaSyB6lNKVii5q99xCgcXano_jVxeVzyapbd0",
+  authDomain: "myawesomeanimate.firebaseapp.com",
+  projectId: "myawesomeanimate",
+  storageBucket: "myawesomeanimate.firebasestorage.app",
+  messagingSenderId: "3658545300",
+  appId: "1:3658545300:web:3e15d5414536aa80c61c81",
+  measurementId: "G-NR1NFRNH3X"
 };
 
 // Initialize Firebase
