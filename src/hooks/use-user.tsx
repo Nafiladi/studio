@@ -58,7 +58,17 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     initializeFirebase();
   }, []);
 
-  const auth = isFirebaseInitialized ? getAuth(app) : null;
+  const [auth, setAuth] = useState<ReturnType<typeof getAuth> | null>(null);
+
+  useEffect(() => {
+    if (isFirebaseInitialized) {
+      try {
+        setAuth(getAuth(app));
+      } catch (error) {
+        console.error("Error initializing Firebase Auth:", error);
+      }
+    }
+  }, [isFirebaseInitialized]);
 
   useEffect(() => {
     if (!auth) return;
