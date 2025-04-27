@@ -27,6 +27,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [user, setUser] = useState<User>(null);
   const [isFirebaseInitialized, setIsFirebaseInitialized] = useState(false);
+  const [auth, setAuth] = useState<ReturnType<typeof getAuth> | null>(null);
+  const [initializationError, setInitializationError] = useState<any>(null);
 
   useEffect(() => {
     const initializeFirebase = async () => {
@@ -49,8 +51,9 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         });
 
         setIsFirebaseInitialized(true);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Firebase initialization error:', error);
+        setInitializationError(error); // Capture the error
         // Handle initialization error appropriately
       }
     };
@@ -58,14 +61,14 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     initializeFirebase();
   }, []);
 
-  const [auth, setAuth] = useState<ReturnType<typeof getAuth> | null>(null);
-
   useEffect(() => {
     if (isFirebaseInitialized) {
       try {
-        setAuth(getAuth(app));
-      } catch (error) {
+        const authInstance = getAuth(app);
+        setAuth(authInstance);
+      } catch (error: any) {
         console.error("Error initializing Firebase Auth:", error);
+        setInitializationError(error); // Capture the error
       }
     }
   }, [isFirebaseInitialized]);
