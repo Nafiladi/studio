@@ -1,39 +1,17 @@
-
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApps } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyBmSvYpOk_mREsVo48wDiPokCM4nwPBbFo",
+  authDomain: "story-weaver-2r9wi.firebaseapp.com",
+  projectId: "story-weaver-2r9wi",
+  storageBucket: "story-weaver-2r9wi.firebasestorage.app",
+  messagingSenderId: "942054941199",
+  appId: "1:942054941199:web:37802c37c5d00d8b33397a"
 };
 
 // Initialize Firebase
-let app;
-
-if (
-  !getApps().length &&
-  firebaseConfig.apiKey &&
-  firebaseConfig.authDomain &&
-  firebaseConfig.projectId &&
-  firebaseConfig.storageBucket &&
-  firebaseConfig.messagingSenderId &&
-  firebaseConfig.appId &&
-  firebaseConfig.measurementId
-) {
-  app = initializeApp(firebaseConfig);
-  // const analytics = getAnalytics(app); // You can re-enable analytics if needed
-} else {
-  if (getApps().length > 0) {
-    app = getApps()[0];
-  }
-  console.warn("Firebase configuration is not complete or Firebase is already initialized. Please check your environment variables.");
-}
-
-export { app };
+export const app = initializeApp(firebaseConfig);
